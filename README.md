@@ -18,13 +18,13 @@ install Python versions 2.7.14 and 3.6.3, accordingly.
 Please follow the next recommended sequence of general instructions to install
 this application:
 
-Git clone
-cd server
-pyenv virtualenv 2.7.14 server27 | pyenv virtualenv 3.6.3 server36
-pyenv activate server27 | pyenv activate server36
-pip install -r requirements.txt
-cd templates/static
-yarn install
-yarn build
-cd ../..
-./start
+    git clone  
+    cd server  
+    pyenv virtualenv 2.7.14 server27 | pyenv virtualenv 3.6.3 server36  
+    pyenv activate server27 | pyenv activate server36  
+    pip install -r requirements.txt  
+    cd templates/static  
+    yarn install  
+    yarn build  
+    cd ../..  
+    ./start  
