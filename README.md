@@ -4,7 +4,7 @@ Flask + React
 ## Description
 Simple Flask React web application built with Flask-Bootstrap, Webpack and
 Yarn. Based on the work given by Angela Branaes:
-[Building  a Python ReactJS ]https://www.youtube.com/watch?v=nfi0hX-F8Zo
+[Building a Python ReactJS web application](https://www.youtube.com/watch?v=nfi0hX-F8Zo "Youtube: Angela Branaes")
 
 ## Setup
 PyEnv was used to select the proper Python version to be used along with
