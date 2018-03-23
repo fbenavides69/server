@@ -1,0 +1,28 @@
+{% extends "bootstrap/base.html" %}
+
+{% block html_attribs %} lang="en" {% endblock html_attribs %}
+{% block metas %}
+    <meta charset="utf-8">
+{% endblock metas %}
+
+{% block styles %}
+    {{ super() }}
+    <style>
+        body { padding-top: 4px; }
+    </style>
+{% endblock styles %}
+
+{% block title %} Flask + React {% endblock title %}
+
+{% block content %}
+
+    <div class="container">
+        <div class="jumbotron text-center">
+            <h1>Flask</h1>
+            <p>+</p>
+            <div id="react-content" />
+            <script src="{{url_for('static', filename='dist/bundle.js')}}" type="text/javascript" ></script>
+        </div>
+    </div>
+
+{% endblock content %}
