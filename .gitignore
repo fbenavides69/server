@@ -103,3 +103,5 @@ ENV/
 # NodeJS modules
 node_modules/
 
+# Yarn
+yarn.lock
