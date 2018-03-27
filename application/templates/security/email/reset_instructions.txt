@@ -1,0 +1,3 @@
+Click on the link below to change your password:
+
+{{ reset_link }}

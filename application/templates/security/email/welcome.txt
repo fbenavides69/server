@@ -1,0 +1,9 @@
+Welcome  {{ user.email }}
+
+{% if security.confirmable %}
+
+    You can confirm your email address by clicking on the link below:
+
+    {{ confirmation_link }}
+
+{% endif %}

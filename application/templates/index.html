@@ -1,32 +1,14 @@
-{% extends "bootstrap/base.html" %}
-
-{% block html_attribs %} lang="en" {% endblock html_attribs %}
-{% block metas %}
-    <meta charset="utf-8">
-{% endblock metas %}
-
-{% block styles %}
-    {{ super() }}
-    <style>
-        body { padding-top: 4px; }
-    </style>
-{% endblock styles %}
+{% extends "layout.html" %}
 
 {% block title %} Flask + React {% endblock title %}
 
-{% block navbar %}
-    {{ nav.top.render() }}
-{% endblock navbar %}
+{% block mycontent %}
 
-{% block content %}
-
-    <div class="container">
-        <div class="jumbotron text-center">
-            <h1>Flask</h1>
-            <p>+</p>
-            <div id="react-welcome" />
-            <script src="{{url_for('static', filename='dist/bundle.js')}}" type="text/javascript" ></script>
-        </div>
+    <div class="jumbotron text-center">
+        <h1>Flask</h1>
+        <p>+</p>
+        <div id="react-welcome" />
+        <script src="{{url_for('static', filename='dist/bundle.js')}}" type="text/javascript" ></script>
     </div>
 
-{% endblock content %}
+{% endblock mycontent %}

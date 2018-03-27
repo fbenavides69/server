@@ -1,0 +1,13 @@
+{% extends "layout.html" %}
+
+{% block title %} Login instructions {% endblock %}
+
+{% block mycontent %}
+
+    <p> Welcome {{ user.email }} </p>
+
+    <p> You can now login into your account clicking on the link below: </p>
+
+    <p><a href="{{ login_link }}"> Login now </a></p>
+
+{% endblock mycontent %}

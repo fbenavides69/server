@@ -1,0 +1,31 @@
+{% extends "bootstrap/base.html" %}
+
+{% block html_attribs %} lang="sp" {% endblock html_attribs %}
+{% block metas %}
+    <meta charset="utf-8">
+{% endblock %}
+
+{% block styles %}
+    {{ super() }}
+    <style>
+        body { padding-top: 4px; }
+    </style>
+{% endblock styles %}
+
+{% block title %} Layout {% endblock title %}
+
+{% block navbar %}
+    {{ nav.index.render() }}
+{% endblock navbar %}
+
+{% block content %}
+
+    <div class="container">
+
+        {% include "security/_messages.html" %}
+
+        {% block mycontent %}{% endblock mycontent %}
+
+    </div>
+
+{% endblock content %}

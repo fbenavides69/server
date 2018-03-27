@@ -1,0 +1,17 @@
+{% extends "layout.html" %}
+
+{% block title %} Bienvenido {% endblock %}
+
+{% block mycontent %}
+
+    <p> Welcome {{ user.email }}</p>
+
+    {% if security.confirmable %}
+
+        <p> You can confirm your email address by clicking on the link below: </p>
+
+        <p><a href="{{ confirmation_link }}"> Confirm my account </a></p>
+
+    {% endif %}
+
+{% endblock mycontent %}

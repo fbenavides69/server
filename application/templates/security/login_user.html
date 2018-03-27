@@ -1,0 +1,18 @@
+{% extends "layout.html" %}
+{% from "security/_macros.html" import render_field_with_errors, render_field_with_errors_right, render_field %}
+
+{% block title %} Login {% endblock %}
+
+{% block mycontent %}
+
+    <h1> Login </h1>
+    <form action="{{ url_for_security('login') }}" method="POST" name="login_user_form">
+        {{ login_user_form.hidden_tag() }}
+        {{ render_field_with_errors("Email address ", login_user_form.email, class="form-control", placeholder="example@email.com") }}
+        {{ render_field_with_errors("Password ", login_user_form.password, class="form-control", placeholder="Password") }}
+        {{ render_field_with_errors_right("Remember me", login_user_form.remember) }}
+        {{ render_field(login_user_form.next, class="btn btn-primary") }}
+        {{ render_field(login_user_form.submit, class="btn btn-primary", value="Login") }}
+    </form>
+
+{% endblock mycontent %}

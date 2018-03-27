@@ -1,0 +1,5 @@
+Welcome {{ user.email) }}
+
+You can now login into your account clicking on the link below:
+
+{{ login_link }}

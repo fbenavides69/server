@@ -1,0 +1,15 @@
+{% extends "layout.html" %}
+{% from "security/_macros.html" import render_field_with_errors, render_field %}
+
+{% block title %} Send login {% endblock %}
+
+{% block mycontent %}
+
+    <h1> Send login </h1>
+    <form action="{{ url_for_security('login') }}" method="POST" name="send_login_form">
+      {{ send_login_form.hidden_tag() }}
+      {{ render_field_with_errors("Email address", send_login_form.email, class="form-control", placeholder="example@email.com") }}
+      {{ render_field(send_login_form.submit, class="btn btn-primary", value="Send") }}
+    </form>
+
+{% endblock mycontent %}

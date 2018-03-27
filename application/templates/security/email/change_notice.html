@@ -1,0 +1,15 @@
+{% extends "layout.html" %}
+
+{% block title %} Change notice {% endblock %}
+
+{% block mycontent %}
+
+    <p> Your password has been changed </p>
+
+    {% if security.recoverable %}
+
+        <p> If you have not changed your password, <a href="{{ url_for_security('forgot_password', _external=True) }}"> click here to restore your password' </a>.</p>
+
+    {% endif %}
+
+{% endblock mycontent %}

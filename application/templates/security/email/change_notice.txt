@@ -1,0 +1,9 @@
+Your password has been changed
+
+{% if security.recoverable %}
+
+    If you have not changed your password, click on the link below to restore your password:
+
+    {{ url_for_security('forgot_password', _external=True) }}
+
+{% endif %}

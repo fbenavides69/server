@@ -1,0 +1,14 @@
+{% extends "layout.html" %}
+{% from "security/_macros.html" import render_field_with_errors, render_field %}
+
+{% block title %} Adentro! {% endblock %}
+
+{% block navbar %}
+    {{ nav.inside.render() }}
+{% endblock navbar %}
+
+{% block mycontent %}
+
+    <h1> Adentro! </h1>
+
+{% endblock mycontent %}
