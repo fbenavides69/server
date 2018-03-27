@@ -5,6 +5,7 @@ from flask import render_template
 from flask_bootstrap import Bootstrap
 from flask_debugtoolbar import DebugToolbarExtension
 
+from .logging import log
 from .navbar import nav
 
 
@@ -25,10 +26,14 @@ def create_app():
 
     Bootstrap(app)
     nav.init_app(app)
+    log.init_app(app)
+
     toolbar = DebugToolbarExtension(app)
 
     @app.route('/')
     def index():
         return render_template('index.html')
+
+    log.log.info('{} application started'.format(__name__))
 
     return app
