@@ -7,6 +7,10 @@ CONFIG = 'DEFAULT'
 DEBUG = False
 
 # Logging
+# LOG_TIMEZONE_GMT
+#   Valid values:
+#       True  - Use GMT time zone
+#       False - Use local time zome
 LOG_TIMEZONE_GMT = True
 # LOG_TYPE
 #   Valid values:
