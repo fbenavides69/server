@@ -8,6 +8,10 @@ DEBUG = False
 
 # Logging
 LOG_TIMEZONE_GMT = True
+# LOG_TYPE
+#   Valid values:
+#       'single'   : one single log file only
+#       'rotating' : ten file rotation with 100k max bytes each
 LOG_TYPE = 'single'
 LOG_FILE = '/tmp/server'
 LOG_LEVEL = logging.INFO
