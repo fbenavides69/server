@@ -13,6 +13,7 @@ from flask_debugtoolbar import DebugToolbarExtension
 
 from .logging import log
 from .navbar import nav
+from .navbar import custom_renderer
 from .models import db
 from .models import User
 from .models import Role
@@ -94,6 +95,7 @@ def create_app():
     # Setup User Interface
     Bootstrap(app)
     nav.init_app(app)
+    custom_renderer.init_app(app)
 
     # Debug Toolbar
     toolbar = DebugToolbarExtension(app)
@@ -107,6 +109,6 @@ def create_app():
     def inside():
         return render_template('inside.html')
 
-    log.log.info('{} application started'.format(__name__))
+    log.logger.info('{} application started'.format(__name__))
 
     return app

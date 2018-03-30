@@ -1,7 +1,7 @@
 {% extends "layout.html" %}
 {% from "security/_macros.html" import render_field_with_errors, render_field %}
 
-{% block title %} Adentro! {% endblock %}
+{% block title %} Adentro! {% endblock title %}
 
 {% block navbar %}
     {{ nav.inside.render() }}
@@ -9,6 +9,7 @@
 
 {% block mycontent %}
 
+    <p class="text-right"><strong>{{ current_user.email }}</strong></p>
     <h1> Adentro! </h1>
 
 {% endblock mycontent %}
