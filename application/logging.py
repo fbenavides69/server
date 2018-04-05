@@ -130,8 +130,8 @@ class JSONLogger(object):
     def __init__(self, app=None):
         '''Initialize the object '''
 
+        self.app = app
         if app is not None:
-            self.app = app
             self.init_app(app)
 
     def init_app(self, app):
