@@ -36,14 +36,15 @@ class User(db.Model, UserMixin):
     email = db.Column(db.String(255), unique=True)
     password = db.Column(db.String(255), nullable=False)
     active = db.Column(db.Boolean())
+    # SECURITY_CONFIRMABLE
     confirmed_at = db.Column(db.DateTime())
-
+    # SECURITY_TRACKABLE
     last_login_at = db.Column(db.DateTime())
     last_login_ip = db.Column(db.String(100))
     current_login_at = db.Column(db.DateTime())
     current_login_ip = db.Column(db.String(100))
     login_count = db.Column(db.Integer())
-
+    # Custom
     username = db.Column(db.String(255), nullable=True)
 
     roles = relationship(
