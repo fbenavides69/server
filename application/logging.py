@@ -163,6 +163,3 @@ class JSONLogger(object):
         self.logger.addHandler(handler)
 
         self.logger.info('Logging Initialize')
-
-
-log = JSONLogger()

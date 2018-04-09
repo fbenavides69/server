@@ -1,14 +1,16 @@
 # -*- coding: utf-8 -*-
 
+import datetime
+
 from flask_security import RoleMixin
 from flask_security import UserMixin
-from flask_sqlalchemy import SQLAlchemy
 from sqlalchemy.orm import relationship
 from sqlalchemy.orm import backref
+from sqlalchemy.ext.declarative import declarative_base
 
-# Initialize the SQL Alchemy object
-db = SQLAlchemy()
+from .extensions import db
 
+Base = declarative_base()
 
 roles_users = db.Table(
     'roles_users',
@@ -26,7 +28,7 @@ class Role(db.Model, RoleMixin):
     description = db.Column(db.String(255))
 
     def __repr__(self):
-        return '<Role> {}'.format(self.name)
+        return '<Role> {} {} {}'.format(self.id, self.name, self.description)
 
 
 class User(db.Model, UserMixin):
@@ -45,6 +47,15 @@ class User(db.Model, UserMixin):
     current_login_ip = db.Column(db.String(100))
     login_count = db.Column(db.Integer())
     # Custom
+    created_at = db.Column(
+        db.DateTime,
+        default=datetime.datetime.now,
+        nullable=False)
+    updated_at = db.Column(
+        db.DateTime,
+        default=datetime.datetime.now,
+        onupdate=datetime.datetime.now,
+        nullable=False)
     username = db.Column(db.String(255), nullable=True)
 
     roles = relationship(
@@ -53,8 +64,17 @@ class User(db.Model, UserMixin):
         backref=backref('users', lazy='dynamic'))
 
     def __repr__(self):
-        return '<User> {} {}'.format(
-            self.username, 'Active' if self.active else 'Non Active')
+        return '<User> {} {} {} {}'.format(
+            self.id,
+            self.username,
+            self.email,
+            'Active' if self.active else 'Non Active')
+
+    meta = {
+        'allow_inheritance': True,
+        'indexes': ['created_at', 'email', 'username'],
+        'ordering': ['-created_at']
+    }
 
 
 class RolesUsers():

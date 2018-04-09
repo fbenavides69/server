@@ -1,27 +1,114 @@
 # -*- coding: utf-8 -*-
 
 from flask import Flask
-from flask import redirect
 from flask import render_template
-from flask_bootstrap import Bootstrap
+from flask_nav.elements import *
 from flask_security import utils
 from flask_security import Security
-from flask_security import login_required
 from flask_security import SQLAlchemyUserDatastore
-from flask_mail import Mail
 
-from flask_debugtoolbar import DebugToolbarExtension
+from .extensions import cfg
+from .extensions import cache
+from .extensions import log
+from .extensions import mail
+from .extensions import db
+from .extensions import boot
+from .extensions import nav
+from .extensions import custom_renderer
+from .extensions import debug_toolbar
+from .navbar import ExtendedNavbar
 
-from .config import cfg
-from .logging import log
-from .navbar import nav
-from .navbar import custom_renderer
-from .models import db
 from .models import User
 from .models import Role
+from .commands import *
+from .urls import mod as urls
+
+
+def register_navbar():
+    ''' Initialize navbar elements'''
+
+    # registers the "index" (public) menubar
+    nav.register_element(
+        'index',
+        ExtendedNavbar(
+            title=View('Welcome', 'main.index'),
+            root_class='navbar navbar-inverse',
+            right_items=(
+                View('Register', 'security.register'),
+                View('Login', 'security.login'),)))
+
+    # registers the "inside" (private) menubar
+    nav.register_element(
+        'inside',
+        ExtendedNavbar(
+            title=View('Welcome', 'main.index'),
+            root_class='navbar navbar-inverse',
+            right_items=(
+                View('Logout', 'security.logout'),
+            ),))
+
+
+def register_extensions(app):
+    ''' Initialize given extensions'''
+
+    cfg.init_app(app)
+    cache.init_app(app)
+    log.init_app(app)
+    mail.init_app(app)
+    db.init_app(app)
+
+    boot.init_app(app)
+    nav.init_app(app)
+    custom_renderer.init_app(app)
+
+    debug_toolbar.init_app(app)
+
+    global user_datastore
+    user_datastore = SQLAlchemyUserDatastore(db, User, Role)
+    global security
+    security = Security(app, user_datastore)
+
+    app.register_blueprint(urls)
+
+
+def register_error_handlers(app):
+    ''' Handle errors'''
+
+    def render_error(error):
+        error_code = getattr(error, 'code', 500)
+        return render_template("{0}.html".format(error_code)), error_code
+
+    for errcode in [401, 404, 500]:
+        app.errorhandler(errcode)(render_error)
+
+    return None
+
+
+def register_shell_context(app):
+    ''' Register shell context objects'''
+
+    def shell_context():
+        '''Shell context objects'''
+        return {
+            'db': db,
+            'User': User,
+            'Role': Role}
+
+    app.shell_context_processor(shell_context)
+
+
+def register_commands(app):
+    ''' Register Click Commands'''
+
+    app.cli.add_command(install)
+    app.cli.add_command(user)
+    app.cli.add_command(role)
+    app.cli.add_command(passwd)
+    app.cli.add_command(clean)
 
 
 def create_app():
+    ''' Flask factory pattern'''
 
     # Initialize app
     app = Flask(
@@ -31,17 +118,11 @@ def create_app():
         instance_relative_config=True)
     app.url_map.strict_slashes = False
 
-    # Set-up the application core
-
-    cfg.init_app(app)   # Configuration
-    log.init_app(app)   # Logging
-    db.init_app(app)    # Flask-Security ORM
-    Mail(app)           # Flask-Security Email sending
-
-    # Create needed connection
-    user_datastore = SQLAlchemyUserDatastore(db, User, Role)
-    global security
-    security = Security(app, user_datastore)
+    register_navbar()
+    register_extensions(app)
+    register_error_handlers(app)
+    register_shell_context(app)
+    register_commands(app)
 
     # Executes before the first request is processed
     @app.before_first_request
@@ -108,28 +189,6 @@ def create_app():
 
         # Commit the Admin User and Role
         db.session.commit()
-
-    # Setup User Interface
-    Bootstrap(app)
-    nav.init_app(app)
-    custom_renderer.init_app(app)
-
-    # Debug Toolbar
-    global toolbar
-    toolbar = DebugToolbarExtension(app)
-
-    @app.route('/favicon.ico')
-    def favicon():
-        return redirect('http://cdn.sstatic.net/superuser/img/favicon.ico')
-
-    @app.route('/')
-    def index():
-        return render_template('index.html')
-
-    @app.route('/inside')
-    @login_required
-    def inside():
-        return render_template('inside.html')
 
     log.logger.info('{} application started'.format(__name__))
 

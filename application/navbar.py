@@ -1,6 +1,5 @@
 # -*- coding: utf-8 -*-
 
-from flask_nav import Nav
 from flask_nav.elements import *
 from flask_bootstrap.nav import BootstrapRenderer
 from flask_bootstrap.nav import sha1
@@ -9,9 +8,7 @@ from dominate import tags
 
 class ExtendedNavbar(NavigationItem):
 
-    def __init__(self,
-                 title, root_class='navbar navbar-default',
-                 items=[], right_items=[]):
+    def __init__(self, title, root_class='navbar navbar-default', items=[], right_items=[]):
         super(ExtendedNavbar, self).__init__()
         self.title = title
         self.root_class = root_class
@@ -85,27 +82,3 @@ class CustomBootstrapRenderer(BootstrapRenderer):
                 right_bar_list.add(self.visit(item))
 
         return root
-
-
-nav = Nav()
-custom_renderer = CustomBootstrapRenderer()
-
-# registers the "index" (public) menubar
-nav.register_element(
-    'index',
-    ExtendedNavbar(
-        title=View('Welcome', 'index'),
-        root_class='navbar navbar-inverse',
-        right_items=(
-            View('Register', 'security.register'),
-            View('Login', 'security.login'),)))
-
-# registers the "inside" (private) menubar
-nav.register_element(
-    'inside',
-    ExtendedNavbar(
-        title=View('Welcome', 'index'),
-        root_class='navbar navbar-inverse',
-        right_items=(
-            View('Logout', 'security.logout'),
-        ),))
