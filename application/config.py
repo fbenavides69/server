@@ -1,4 +1,13 @@
 # -*- coding: utf-8 -*-
+''' Configuration
+
+    Read the configuration set-up in the following order:
+        1) application core
+            (config/default.py)
+        2) security related
+            (instance/config.py)
+        3) environment related
+            (config/development.py|stagging.py|production.py)'''
 
 
 class Configuration(object):
@@ -20,6 +29,3 @@ class Configuration(object):
         app.config.from_object('config.default')
         app.config.from_pyfile('config.py')
         app.config.from_envvar('APP_CONFIG_FILE')
-
-
-cfg = Configuration()
