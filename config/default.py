@@ -26,6 +26,9 @@ LOG_TYPE = 'rotating'
 LOG_FILE = '/tmp/server'
 LOG_LEVEL = logging.INFO
 
+# Flask-Cache
+CACHE_TYPE = 'simple'  # Can be "memcached", "redis", etc.
+
 # Flask-Security
 SECURITY_REGISTERABLE = True
 SECURITY_RECOVERABLE = True
