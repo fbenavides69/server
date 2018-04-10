@@ -105,3 +105,8 @@ node_modules/
 
 # Yarn
 yarn.lock
+
+# Other
+.idea
+.DS_Store
+.sass-cache
