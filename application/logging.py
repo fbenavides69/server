@@ -1,12 +1,12 @@
 # -*- coding: utf-8 -*-
 
 import time
-from logging import getLogger
 from logging import Formatter
 from logging import FileHandler
 from logging.handlers import RotatingFileHandler
 from collections import OrderedDict
 from json import dumps
+
 
 LOG_DATE_FMT = '%Y-%m-%dT%H:%M:%SZ%z'
 LOG_RECORD_FIELDS = [
@@ -158,8 +158,8 @@ class JSONLogger(object):
             json_formatter.converter = time.gmtime
         handler.setFormatter(json_formatter)
 
-        self.logger = getLogger(__name__)
-        self.logger.setLevel(app.config['LOG_LEVEL'])
-        self.logger.addHandler(handler)
-
-        self.logger.info('Logging Initialize')
+        for app_logger_handler in app.logger.handlers:
+            app.logger.removeHandler(app_logger_handler)
+        app.logger.setLevel(app.config['LOG_LEVEL'])
+        app.logger.addHandler(handler)
+        app.logger.info('logging initialize')

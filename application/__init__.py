@@ -1,4 +1,8 @@
 # -*- coding: utf-8 -*-
+''' Flask Application Factory
+
+    Blueprint Flask application using the factory pattern,
+    with configuration setup and blueprint module registration'''
 
 from flask import Flask
 from flask import render_template
@@ -20,6 +24,8 @@ from .navbar import ExtendedNavbar
 
 from .models import User
 from .models import Role
+from .admin import admin
+
 from .commands import *
 from .urls import mod as urls
 
@@ -56,6 +62,7 @@ def register_extensions(app):
     log.init_app(app)
     mail.init_app(app)
     db.init_app(app)
+    admin.init_app(app)
 
     boot.init_app(app)
     nav.init_app(app)
@@ -67,6 +74,10 @@ def register_extensions(app):
     user_datastore = SQLAlchemyUserDatastore(db, User, Role)
     global security
     security = Security(app, user_datastore)
+
+
+def register_blueprints(app):
+    ''' Register Blueprint extensions'''
 
     app.register_blueprint(urls)
 
@@ -108,7 +119,23 @@ def register_commands(app):
 
 
 def create_app():
-    ''' Flask factory pattern'''
+    ''' create_app
+
+        input:
+            None
+
+        output:
+            app -- flask web application instance
+
+        Read configuration values in the following order:
+            1) default, values which can be overwritten later
+            2) intance, for your eyes only not stored in repo values
+            3) environment, selectable values from:
+                - development
+                - stagging
+                - production
+
+        Setup web interface with Bootstrap framework'''
 
     # Initialize app
     app = Flask(
@@ -120,6 +147,7 @@ def create_app():
 
     register_navbar()
     register_extensions(app)
+    register_blueprints(app)
     register_error_handlers(app)
     register_shell_context(app)
     register_commands(app)
@@ -137,13 +165,13 @@ def create_app():
         user_datastore.find_or_create_role(
             name=app.config['SUPER_ROLE'],
             description=app.config['SUPER_ROLE_DESCRIPTION'])
-        log.logger.info('Role [{}|{}] created'.format(
+        app.logger.info('Role [{}|{}] created'.format(
             app.config['SUPER_ROLE'], app.config['SUPER_ROLE_DESCRIPTION']))
 
         user_datastore.find_or_create_role(
             name=app.config['ADMIN_ROLE'],
             description=app.config['ADMIN_ROLE_DESCRIPTION'])
-        log.logger.info('Role [{}|{}] created'.format(
+        app.logger.info('Role [{}|{}] created'.format(
             app.config['ADMIN_ROLE'], app.config['ADMIN_ROLE_DESCRIPTION']))
 
         # Create two Users for testing purposes -- unless they already exists.
@@ -155,7 +183,7 @@ def create_app():
         if not user_datastore.get_user(app.config['SUPER_EMAIL']):
             user_datastore.create_user(
                 email=app.config['SUPER_EMAIL'], password=encrypted_password)
-            log.logger.info('User created: {}/{} {}'.format(
+            app.logger.info('User created: {}/{} {}'.format(
                 app.config['SUPER_EMAIL'],
                 app.config['SUPER_PASSWORD'],
                 encrypted_password))
@@ -165,7 +193,7 @@ def create_app():
         if not user_datastore.get_user(app.config['ADMIN_EMAIL']):
             user_datastore.create_user(
                 email=app.config['ADMIN_EMAIL'], password=encrypted_password)
-            log.logger.info('User created: {}/{} {}'.format(
+            app.logger.info('User created: {}/{} {}'.format(
                 app.config['ADMIN_EMAIL'],
                 app.config['ADMIN_PASSWORD'],
                 encrypted_password))
@@ -179,17 +207,17 @@ def create_app():
 
         user_datastore.add_role_to_user(
             app.config['SUPER_EMAIL'], app.config['SUPER_ROLE'])
-        log.logger.info('User {} has role {}'.format(
+        app.logger.info('User {} has role {}'.format(
             app.config['SUPER_EMAIL'], app.config['SUPER_ROLE']))
 
         user_datastore.add_role_to_user(
             app.config['ADMIN_EMAIL'], app.config['ADMIN_ROLE'])
-        log.logger.info('User {} has role {}'.format(
+        app.logger.info('User {} has role {}'.format(
             app.config['ADMIN_EMAIL'], app.config['ADMIN_ROLE']))
 
         # Commit the Admin User and Role
         db.session.commit()
 
-    log.logger.info('{} application started'.format(__name__))
+    app.logger.info('{} started'.format(__name__))
 
     return app
