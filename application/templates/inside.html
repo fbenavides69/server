@@ -4,7 +4,9 @@
 {% block title %} Adentro! {% endblock title %}
 
 {% block navbar %}
-    {{ nav.inside.render() }}
+    <div class="container">
+        {{ nav.inside.render() }}
+    </div>
 {% endblock navbar %}
 
 {% block mycontent %}
