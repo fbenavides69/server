@@ -15,7 +15,9 @@
 {% block title %} Layout {% endblock title %}
 
 {% block navbar %}
-    {{ nav.index.render() }}
+    <div class="container">
+        {{ nav.index.render() }}
+    </div>
 {% endblock navbar %}
 
 {% block content %}

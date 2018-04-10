@@ -40,6 +40,7 @@ def register_navbar():
             title=View('Welcome', 'main.index'),
             root_class='navbar navbar-inverse',
             right_items=(
+                View('Admin', 'admin.index'),
                 View('Register', 'security.register'),
                 View('Login', 'security.login'),)))
 
