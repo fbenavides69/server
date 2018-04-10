@@ -154,7 +154,7 @@ def create_app():
 
     # Executes before the first request is processed
     @app.before_first_request
-    def before_first_request():
+    def create_users():
 
         # Create any database tables that don't exist yet.
         db.create_all()
@@ -162,60 +162,66 @@ def create_app():
         # Create the Roles "admin" and "super-user"
         # -- unless they already exist
 
-        user_datastore.find_or_create_role(
-            name=app.config['SUPER_ROLE'],
-            description=app.config['SUPER_ROLE_DESCRIPTION'])
-        app.logger.info('Role [{}|{}] created'.format(
-            app.config['SUPER_ROLE'], app.config['SUPER_ROLE_DESCRIPTION']))
+        if not user_datastore.find_role(app.config['SUPER_ROLE']):
+            if user_datastore.create_role(
+                    name=app.config['SUPER_ROLE'],
+                    description=app.config['SUPER_ROLE_DESCRIPTION']):
+                app.logger.info('Role [{}|{}] created'.format(
+                    app.config['SUPER_ROLE'],
+                    app.config['SUPER_ROLE_DESCRIPTION']))
 
-        user_datastore.find_or_create_role(
-            name=app.config['ADMIN_ROLE'],
-            description=app.config['ADMIN_ROLE_DESCRIPTION'])
-        app.logger.info('Role [{}|{}] created'.format(
-            app.config['ADMIN_ROLE'], app.config['ADMIN_ROLE_DESCRIPTION']))
+        if not user_datastore.find_role(app.config['ADMIN_ROLE']):
+            if user_datastore.create_role(
+                    name=app.config['ADMIN_ROLE'],
+                    description=app.config['ADMIN_ROLE_DESCRIPTION']):
+                app.logger.info('Role [{}|{}] created'.format(
+                    app.config['ADMIN_ROLE'],
+                    app.config['ADMIN_ROLE_DESCRIPTION']))
 
         # Create two Users for testing purposes -- unless they already exists.
         # In each case, use Flask-Security utility function to encrypt the
         # password.
 
-        encrypted_password = utils.encrypt_password(
-            app.config['SUPER_PASSWORD'])
         if not user_datastore.get_user(app.config['SUPER_EMAIL']):
-            user_datastore.create_user(
-                email=app.config['SUPER_EMAIL'], password=encrypted_password)
-            app.logger.info('User created: {}/{} {}'.format(
-                app.config['SUPER_EMAIL'],
-                app.config['SUPER_PASSWORD'],
-                encrypted_password))
+            encrypted_password = utils.encrypt_password(
+                app.config['SUPER_PASSWORD'])
+            if user_datastore.create_user(
+                    email=app.config['SUPER_EMAIL'],
+                    password=encrypted_password):
+                app.logger.info('User created: {}/{} {}'.format(
+                    app.config['SUPER_EMAIL'],
+                    app.config['SUPER_PASSWORD'],
+                    encrypted_password))
 
-        encrypted_password = utils.encrypt_password(
-            app.config['ADMIN_PASSWORD'])
         if not user_datastore.get_user(app.config['ADMIN_EMAIL']):
-            user_datastore.create_user(
-                email=app.config['ADMIN_EMAIL'], password=encrypted_password)
-            app.logger.info('User created: {}/{} {}'.format(
-                app.config['ADMIN_EMAIL'],
-                app.config['ADMIN_PASSWORD'],
-                encrypted_password))
+            encrypted_password = utils.encrypt_password(
+                app.config['ADMIN_PASSWORD'])
+            if user_datastore.create_user(
+                    email=app.config['ADMIN_EMAIL'],
+                    password=encrypted_password):
+                app.logger.info('User created: {}/{} {}'.format(
+                    app.config['ADMIN_EMAIL'],
+                    app.config['ADMIN_PASSWORD'],
+                    encrypted_password))
 
-        # Commit any database changes; the User and Roles must exist before
-        # we can add a Role to the User
+        # Commit any database changes;
+        # the User and Roles must exist before we can add a Role to the User
         db.session.commit()
 
         # "admin" role. (This will have no effect if the Users already have
         # these Roles.) Again, commit any database changes.
 
-        user_datastore.add_role_to_user(
-            app.config['SUPER_EMAIL'], app.config['SUPER_ROLE'])
-        app.logger.info('User {} has role {}'.format(
-            app.config['SUPER_EMAIL'], app.config['SUPER_ROLE']))
+        if user_datastore.add_role_to_user(
+                app.config['SUPER_EMAIL'], app.config['SUPER_ROLE']):
+            app.logger.info('User {} has role {}'.format(
+                app.config['SUPER_EMAIL'], app.config['SUPER_ROLE']))
 
-        user_datastore.add_role_to_user(
-            app.config['ADMIN_EMAIL'], app.config['ADMIN_ROLE'])
-        app.logger.info('User {} has role {}'.format(
-            app.config['ADMIN_EMAIL'], app.config['ADMIN_ROLE']))
+        if user_datastore.add_role_to_user(
+                app.config['ADMIN_EMAIL'], app.config['ADMIN_ROLE']):
+            app.logger.info('User {} has role {}'.format(
+                app.config['ADMIN_EMAIL'], app.config['ADMIN_ROLE']))
 
-        # Commit the Admin User and Role
+        # Commit the Admin and Super users and the corresponding roles
         db.session.commit()
 
     app.logger.info('{} started'.format(__name__))
