@@ -16,6 +16,3 @@ DEBUG_TB_INTERCEPT_REDIRECTS = True
 LOG_TYPE = 'single'
 LOG_FILE = '/tmp/server_development'
 LOG_LEVEL = logging.DEBUG
-
-# REPL
-REPL_FILE = '/tmp/repl_development.txt'
