@@ -90,7 +90,7 @@ def register_error_handlers(app):
         error_code = getattr(error, 'code', 500)
         return render_template("{0}.html".format(error_code)), error_code
 
-    for errcode in [401, 404, 500]:
+    for errcode in [401, 403, 404, 500]:
         app.errorhandler(errcode)(render_error)
 
     return None
@@ -189,7 +189,7 @@ def create_app():
             if user_datastore.create_user(
                     email=app.config['SUPER_EMAIL'],
                     password=encrypted_password):
-                app.logger.info('User created: {}/{} {}'.format(
+                app.logger.info('User [{}|{}] {} created'.format(
                     app.config['SUPER_EMAIL'],
                     app.config['SUPER_PASSWORD'],
                     encrypted_password))
@@ -200,7 +200,7 @@ def create_app():
             if user_datastore.create_user(
                     email=app.config['ADMIN_EMAIL'],
                     password=encrypted_password):
-                app.logger.info('User created: {}/{} {}'.format(
+                app.logger.info('User [{}|{}] {} created'.format(
                     app.config['ADMIN_EMAIL'],
                     app.config['ADMIN_PASSWORD'],
                     encrypted_password))
@@ -214,12 +214,12 @@ def create_app():
 
         if user_datastore.add_role_to_user(
                 app.config['SUPER_EMAIL'], app.config['SUPER_ROLE']):
-            app.logger.info('User {} has role {}'.format(
+            app.logger.info('User [{}] has Role [{}]'.format(
                 app.config['SUPER_EMAIL'], app.config['SUPER_ROLE']))
 
         if user_datastore.add_role_to_user(
                 app.config['ADMIN_EMAIL'], app.config['ADMIN_ROLE']):
-            app.logger.info('User {} has role {}'.format(
+            app.logger.info('User [{}] has Role [{}]'.format(
                 app.config['ADMIN_EMAIL'], app.config['ADMIN_ROLE']))
 
         # Commit the Admin and Super users and the corresponding roles

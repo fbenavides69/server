@@ -18,7 +18,6 @@ from wtforms.fields.simple import PasswordField
 from .models import db
 from .models import Role
 from .models import User
-#from .models import RolesUsers
 
 
 # Customized Role model for SQL-Admin
@@ -79,15 +78,6 @@ class UserAdmin(ModelView):
             model.password = utils.encrypt_password(model.password2)
 
 
-# Customized RolesUsers model for Flask-Admin
-#class RolesUsersAdmin(ModelView):
-
-    # Prevent administration Users Roles unless the current logged-in user has
-    # the "admin" role
-    #def is_accessible(self):
-    #    return current_user.has_role('admin')
-
-
 # Customized Flask-admin Admin area
 class MyAdminIndexView(AdminIndexView):
 
@@ -118,4 +108,3 @@ admin = Admin(index_view=MyAdminIndexView(name='Admin'))
 
 admin.add_view(RoleAdmin(Role, db.session))
 admin.add_view(UserAdmin(User, db.session))
-#admin.add_view(RolesUsersAdmin(RolesUsers, db.session))
