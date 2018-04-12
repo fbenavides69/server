@@ -64,7 +64,6 @@ class JSONFormatter(Formatter):
         self.record_fields = record_fields
         self.date_fmt = date_fmt
         self.custom_json = custom_json
-        #self.converter = time.gmtime
 
     def uses_time(self):
         """
