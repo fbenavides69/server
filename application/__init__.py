@@ -29,6 +29,7 @@ from .admin import RoleAdmin
 
 from .commands import *
 from .urls import mod as urls
+from .graphql import mod as graphql_urls
 
 
 def init_navbar():
@@ -94,6 +95,11 @@ def register_blueprints(app):
     ''' Register Blueprint extensions'''
 
     app.register_blueprint(urls)
+    app.register_blueprint(graphql_urls)
+
+    @app.teardown_appcontext
+    def shutdown_session(exception=None):
+        db.session.remove()
 
 
 def register_error_handlers(app):
