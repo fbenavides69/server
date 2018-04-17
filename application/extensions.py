@@ -9,9 +9,11 @@ from flask_sqlalchemy import SQLAlchemy
 from flask_bootstrap import Bootstrap
 from flask_nav import Nav
 from flask_debugtoolbar import DebugToolbarExtension
+from flask_admin import Admin
 
 from .config import Configuration
 from .logging import JSONLogger
+from .admin import MyAdminIndexView
 from .navbar import CustomBootstrapRenderer
 
 
@@ -20,6 +22,7 @@ cache = Cache()
 log = JSONLogger()
 mail = Mail()
 db = SQLAlchemy()
+admin = Admin(name='Admin', index_view=MyAdminIndexView())
 
 boot = Bootstrap()
 nav = Nav()

@@ -7,7 +7,6 @@
 from flask import Flask
 from flask import render_template
 from flask_nav.elements import *
-from flask_security import utils
 from flask_security import Security
 from flask_security import SQLAlchemyUserDatastore
 
@@ -16,6 +15,7 @@ from .extensions import cache
 from .extensions import log
 from .extensions import mail
 from .extensions import db
+from .extensions import admin
 from .extensions import boot
 from .extensions import nav
 from .extensions import custom_renderer
@@ -24,13 +24,14 @@ from .navbar import ExtendedNavbar
 
 from .models import User
 from .models import Role
-from .admin import admin
+from .admin import UserAdmin
+from .admin import RoleAdmin
 
 from .commands import *
 from .urls import mod as urls
 
 
-def register_navbar():
+def init_navbar():
     ''' Initialize navbar elements'''
 
     # registers the "index" (public) menubar
@@ -54,10 +55,25 @@ def register_navbar():
                 View('Logout', 'security.logout'),
             ),))
 
+    # registers the "inside" (private) menubar
+    nav.register_element(
+        'admin',
+        ExtendedNavbar(
+            title=View('Admin', 'admin.index'),
+            root_class='navbar navbar-inverse',
+            items=(
+                View('Role', 'role.index_view'),
+                View('User', 'user.index_view'),
+            ),
+            right_items=(
+                View('Logout', 'security.logout'),
+            ),))
+
 
 def register_extensions(app):
     ''' Initialize given extensions'''
 
+    # Core services
     cfg.init_app(app)
     cache.init_app(app)
     log.init_app(app)
@@ -65,16 +81,13 @@ def register_extensions(app):
     db.init_app(app)
     admin.init_app(app)
 
+    # Look and feel
     boot.init_app(app)
     nav.init_app(app)
     custom_renderer.init_app(app)
 
+    # Debugging
     debug_toolbar.init_app(app)
-
-    global user_datastore
-    user_datastore = SQLAlchemyUserDatastore(db, User, Role)
-    global security
-    security = Security(app, user_datastore)
 
 
 def register_blueprints(app):
@@ -84,7 +97,7 @@ def register_blueprints(app):
 
 
 def register_error_handlers(app):
-    ''' Handle errors'''
+    ''' Register Error handler'''
 
     def render_error(error):
         error_code = getattr(error, 'code', 500)
@@ -119,6 +132,89 @@ def register_commands(app):
     app.cli.add_command(clean)
 
 
+def register_users(app):
+    ''' Register Admin and Super User roles and corresponding users'''
+
+    # Set-up user registration
+    global user_datastore
+    user_datastore = SQLAlchemyUserDatastore(db, User, Role)
+    global security
+    security = Security(app, user_datastore)
+
+    # Executes before the first request is processed
+    @app.before_first_request
+    def create_users():
+
+        # Create any database tables that don't exist yet.
+        db.create_all()
+
+        # Create the Roles for "Administration" and "Super User"
+        # -- unless they already exist
+
+        if not user_datastore.find_role(app.config['SUPER_ROLE']):
+            if user_datastore.create_role(
+                    name=app.config['SUPER_ROLE'],
+                    description=app.config['SUPER_ROLE_DESCRIPTION']):
+                app.logger.info('Role [{}|{}] created'.format(
+                    app.config['SUPER_ROLE'],
+                    app.config['SUPER_ROLE_DESCRIPTION']))
+
+        if not user_datastore.find_role(app.config['ADMIN_ROLE']):
+            if user_datastore.create_role(
+                    name=app.config['ADMIN_ROLE'],
+                    description=app.config['ADMIN_ROLE_DESCRIPTION']):
+                app.logger.info('Role [{}|{}] created'.format(
+                    app.config['ADMIN_ROLE'],
+                    app.config['ADMIN_ROLE_DESCRIPTION']))
+
+        # Create Users "admin" and "super"
+        # -- unless they already exists.
+
+        if not user_datastore.get_user(app.config['SUPER_EMAIL']):
+            if user_datastore.create_user(
+                    email=app.config['SUPER_EMAIL'],
+                    password=app.config['SUPER_PASSWORD']):
+                app.logger.info('User [{}|{}] created'.format(
+                    app.config['SUPER_EMAIL'],
+                    app.config['SUPER_PASSWORD']))
+
+        if not user_datastore.get_user(app.config['ADMIN_EMAIL']):
+            if user_datastore.create_user(
+                    email=app.config['ADMIN_EMAIL'],
+                    password=app.config['ADMIN_PASSWORD']):
+                app.logger.info('User [{}|{}] created'.format(
+                    app.config['ADMIN_EMAIL'],
+                    app.config['ADMIN_PASSWORD']))
+
+        # Commit any database changes;
+        # the User and Roles must exist before we can add a Role to the User
+        db.session.commit()
+
+        # "admin" role. (This will have no effect if the Users that already
+        # have these Roles.) Again, commit any database changes.
+
+        if user_datastore.add_role_to_user(
+                app.config['SUPER_EMAIL'], app.config['SUPER_ROLE']):
+            app.logger.info('User [{}] has Role [{}]'.format(
+                app.config['SUPER_EMAIL'], app.config['SUPER_ROLE']))
+
+        if user_datastore.add_role_to_user(
+                app.config['ADMIN_EMAIL'], app.config['ADMIN_ROLE']):
+            app.logger.info('User [{}] has Role [{}]'.format(
+                app.config['ADMIN_EMAIL'], app.config['ADMIN_ROLE']))
+
+        # Commit the Admin and Super users and the corresponding roles
+        db.session.commit()
+
+
+def init_admin():
+    ''' Initialize Admin elements'''
+
+    # Add the Admin views
+    admin.add_view(RoleAdmin(Role, db.session))
+    admin.add_view(UserAdmin(User, db.session))
+
+
 def create_app():
     ''' create_app
 
@@ -146,84 +242,15 @@ def create_app():
         instance_relative_config=True)
     app.url_map.strict_slashes = False
 
-    register_navbar()
     register_extensions(app)
     register_blueprints(app)
     register_error_handlers(app)
     register_shell_context(app)
     register_commands(app)
+    register_users(app)
 
-    # Executes before the first request is processed
-    @app.before_first_request
-    def create_users():
-
-        # Create any database tables that don't exist yet.
-        db.create_all()
-
-        # Create the Roles "admin" and "super-user"
-        # -- unless they already exist
-
-        if not user_datastore.find_role(app.config['SUPER_ROLE']):
-            if user_datastore.create_role(
-                    name=app.config['SUPER_ROLE'],
-                    description=app.config['SUPER_ROLE_DESCRIPTION']):
-                app.logger.info('Role [{}|{}] created'.format(
-                    app.config['SUPER_ROLE'],
-                    app.config['SUPER_ROLE_DESCRIPTION']))
-
-        if not user_datastore.find_role(app.config['ADMIN_ROLE']):
-            if user_datastore.create_role(
-                    name=app.config['ADMIN_ROLE'],
-                    description=app.config['ADMIN_ROLE_DESCRIPTION']):
-                app.logger.info('Role [{}|{}] created'.format(
-                    app.config['ADMIN_ROLE'],
-                    app.config['ADMIN_ROLE_DESCRIPTION']))
-
-        # Create two Users for testing purposes -- unless they already exists.
-        # In each case, use Flask-Security utility function to encrypt the
-        # password.
-
-        if not user_datastore.get_user(app.config['SUPER_EMAIL']):
-            encrypted_password = utils.encrypt_password(
-                app.config['SUPER_PASSWORD'])
-            if user_datastore.create_user(
-                    email=app.config['SUPER_EMAIL'],
-                    password=encrypted_password):
-                app.logger.info('User [{}|{}] {} created'.format(
-                    app.config['SUPER_EMAIL'],
-                    app.config['SUPER_PASSWORD'],
-                    encrypted_password))
-
-        if not user_datastore.get_user(app.config['ADMIN_EMAIL']):
-            encrypted_password = utils.encrypt_password(
-                app.config['ADMIN_PASSWORD'])
-            if user_datastore.create_user(
-                    email=app.config['ADMIN_EMAIL'],
-                    password=encrypted_password):
-                app.logger.info('User [{}|{}] {} created'.format(
-                    app.config['ADMIN_EMAIL'],
-                    app.config['ADMIN_PASSWORD'],
-                    encrypted_password))
-
-        # Commit any database changes;
-        # the User and Roles must exist before we can add a Role to the User
-        db.session.commit()
-
-        # "admin" role. (This will have no effect if the Users already have
-        # these Roles.) Again, commit any database changes.
-
-        if user_datastore.add_role_to_user(
-                app.config['SUPER_EMAIL'], app.config['SUPER_ROLE']):
-            app.logger.info('User [{}] has Role [{}]'.format(
-                app.config['SUPER_EMAIL'], app.config['SUPER_ROLE']))
-
-        if user_datastore.add_role_to_user(
-                app.config['ADMIN_EMAIL'], app.config['ADMIN_ROLE']):
-            app.logger.info('User [{}] has Role [{}]'.format(
-                app.config['ADMIN_EMAIL'], app.config['ADMIN_ROLE']))
-
-        # Commit the Admin and Super users and the corresponding roles
-        db.session.commit()
+    init_navbar()
+    init_admin()
 
     app.logger.info('{} started'.format(__name__))
 

@@ -10,14 +10,9 @@ from flask import redirect
 from flask import current_app
 from flask_security import utils
 from flask_security import current_user
-from flask_admin import Admin
 from flask_admin import AdminIndexView
 from flask_admin.contrib.sqla import ModelView
 from wtforms.fields.simple import PasswordField
-
-from .models import db
-from .models import Role
-from .models import User
 
 
 # Customized Role model for SQL-Admin
@@ -33,7 +28,9 @@ class RoleAdmin(ModelView):
 class UserAdmin(ModelView):
 
     # Don't display the password on the list of Users
-    column_exclude_list = ('password',)
+    # column_exclude_list = ('password',)
+    column_list = ('active', 'email', 'username', 'roles',)
+    column_editable_list = ('active', 'email', 'username', 'roles',)
 
     # Don't include the standard password field when creating or editing a
     # User (but see below)
@@ -102,9 +99,3 @@ class MyAdminIndexView(AdminIndexView):
             else:
                 # login
                 return redirect(url_for('security.login', next=request.url))
-
-
-admin = Admin(index_view=MyAdminIndexView(name='Admin'))
-
-admin.add_view(RoleAdmin(Role, db.session))
-admin.add_view(UserAdmin(User, db.session))

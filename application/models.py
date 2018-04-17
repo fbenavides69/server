@@ -1,18 +1,16 @@
 # -*- coding: utf-8 -*-
 
-import datetime
-
+from flask_security import utils
 from flask_security import RoleMixin
 from flask_security import UserMixin
 from sqlalchemy.orm import relationship
 from sqlalchemy.orm import backref
-from sqlalchemy.ext.declarative import declarative_base
 
 from .extensions import db
 
-Base = declarative_base()
 
 roles_users = db.Table(
+    ''' Joint table'''
     'roles_users',
     db.Column(
         'role_id', db.Integer, db.ForeignKey('role.id'), primary_key=True),
@@ -20,21 +18,40 @@ roles_users = db.Table(
         'user_id', db.Integer, db.ForeignKey('user.id'), primary_key=True))
 
 
-class Role(db.Model, RoleMixin):
+class PrimaryKeyMixin(db.Model):
+    ''' Base clase for common properties'''
+    __abstract__ = True
+
+    id = db.Column(db.Integer(), primary_key=True, autoincrement=True)
+    created_at = db.Column(
+        db.DateTime,
+        default=db.func.current_timestamp(),
+        nullable=False)
+    updated_at = db.Column(
+        db.DateTime,
+        default=db.func.current_timestamp(),
+        onupdate=db.func.current_timestamp(),
+        nullable=False)
+
+
+class Role(PrimaryKeyMixin, RoleMixin):
+    ''' Role based authentication - Flask-Security'''
     __tablename__ = 'role'
 
-    id = db.Column(db.Integer(), primary_key=True)
     name = db.Column(db.String(80), unique=True)
     description = db.Column(db.String(255))
 
     def __repr__(self):
-        return '<Role> {} {} {}'.format(self.id, self.name, self.description)
+        return '<Role> {} [{}|{}]'.format(self.id, self.name, self.description)
+
+    def __str__(self):
+        return self.name
 
 
-class User(db.Model, UserMixin):
+class User(PrimaryKeyMixin, UserMixin):
+    ''' User based authentication - Flask-Security'''
     __tablename__ = 'user'
 
-    id = db.Column(db.Integer(), primary_key=True)
     email = db.Column(db.String(255), unique=True)
     password = db.Column(db.String(255), nullable=False)
     active = db.Column(db.Boolean())
@@ -47,15 +64,6 @@ class User(db.Model, UserMixin):
     current_login_ip = db.Column(db.String(100))
     login_count = db.Column(db.Integer())
     # Custom
-    created_at = db.Column(
-        db.DateTime,
-        default=datetime.datetime.now,
-        nullable=False)
-    updated_at = db.Column(
-        db.DateTime,
-        default=datetime.datetime.now,
-        onupdate=datetime.datetime.now,
-        nullable=False)
     username = db.Column(db.String(255), nullable=True)
 
     roles = relationship(
@@ -63,12 +71,29 @@ class User(db.Model, UserMixin):
         secondary=roles_users,
         backref=backref('users', lazy='dynamic'))
 
+    def __init__(self, email, password=None, **kwargs):
+        ''' Create instance'''
+        super(User, self).__init__(email=email, password=password, **kwargs)
+        if password:
+            self.set_password(password)
+        else:
+            self.password = None
+
     def __repr__(self):
-        return '<User> {} {} {} {}'.format(
+        ''' CLI human undestanable format'''
+        return '<User> {} {} [{}|{}]'.format(
             self.id,
+            'Active' if self.active else 'Non Active',
             self.username,
-            self.email,
-            'Active' if self.active else 'Non Active')
+            self.email)
+
+    def set_password(self, password):
+        ''' Set password with Flask-Security encryption'''
+        self.password = utils.encrypt_password(password)
+
+    def check_password(self, password):
+        ''' Check/Verify the supplied password against the stored password'''
+        return self.password == utils.encrypt_password(password)
 
     meta = {
         'allow_inheritance': True,
@@ -80,6 +105,7 @@ class User(db.Model, UserMixin):
 class RolesUsers():
 
     def __repr__(self):
+        ''' CLI human understandable format'''
         return '<RolesUsers> {} {}'.format(self.role_id, self.user_id)
 
 
