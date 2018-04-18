@@ -1,51 +1,13 @@
 # -*- coding: utf-8 -*-
 
 from flask_security import utils
-from flask_security import RoleMixin
 from flask_security import UserMixin
-from sqlalchemy.orm import relationship
-from sqlalchemy.orm import backref
+from flask_security import SQLAlchemyUserDatastore
 
-from .extensions import db
-
-
-roles_users = db.Table(
-    ''' Joint table'''
-    'roles_users',
-    db.Column(
-        'role_id', db.Integer, db.ForeignKey('role.id'), primary_key=True),
-    db.Column(
-        'user_id', db.Integer, db.ForeignKey('user.id'), primary_key=True))
-
-
-class PrimaryKeyMixin(db.Model):
-    ''' Base clase for common properties'''
-    __abstract__ = True
-
-    id = db.Column(db.Integer(), primary_key=True, autoincrement=True)
-    created_at = db.Column(
-        db.DateTime,
-        default=db.func.current_timestamp(),
-        nullable=False)
-    updated_at = db.Column(
-        db.DateTime,
-        default=db.func.current_timestamp(),
-        onupdate=db.func.current_timestamp(),
-        nullable=False)
-
-
-class Role(PrimaryKeyMixin, RoleMixin):
-    ''' Role based authentication - Flask-Security'''
-    __tablename__ = 'role'
-
-    name = db.Column(db.String(80), unique=True)
-    description = db.Column(db.String(255))
-
-    def __repr__(self):
-        return '<Role> {} [{}|{}]'.format(self.id, self.name, self.description)
-
-    def __str__(self):
-        return self.name
+from .primary import db
+from .primary import PrimaryKeyMixin
+from .roles_users import roles_users
+from .roles import Role
 
 
 class User(PrimaryKeyMixin, UserMixin):
@@ -66,10 +28,9 @@ class User(PrimaryKeyMixin, UserMixin):
     # Custom
     username = db.Column(db.String(255), nullable=True)
 
-    roles = relationship(
-        'Role',
-        secondary=roles_users,
-        backref=backref('users', lazy='dynamic'))
+    roles = db.relationship(
+        'Role', secondary=roles_users,
+        backref=db.backref('users', lazy='dynamic'))
 
     def __init__(self, email, password=None, **kwargs):
         ''' Create instance'''
@@ -102,11 +63,4 @@ class User(PrimaryKeyMixin, UserMixin):
     }
 
 
-class RolesUsers():
-
-    def __repr__(self):
-        ''' CLI human understandable format'''
-        return '<RolesUsers> {} {}'.format(self.role_id, self.user_id)
-
-
-db.mapper(RolesUsers, roles_users)
+user_datastore = SQLAlchemyUserDatastore(db, User, Role)

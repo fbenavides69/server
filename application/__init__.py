@@ -8,13 +8,11 @@ from flask import Flask
 from flask import render_template
 from flask_nav.elements import *
 from flask_security import Security
-from flask_security import SQLAlchemyUserDatastore
 
 from .extensions import cfg
 from .extensions import cache
 from .extensions import log
 from .extensions import mail
-from .extensions import db
 from .extensions import admin
 from .extensions import boot
 from .extensions import nav
@@ -22,8 +20,10 @@ from .extensions import custom_renderer
 from .extensions import debug_toolbar
 from .navbar import ExtendedNavbar
 
+from .models import db
 from .models import User
 from .models import Role
+from .models import user_datastore
 from .admin import UserAdmin
 from .admin import RoleAdmin
 
@@ -142,8 +142,6 @@ def register_users(app):
     ''' Register Admin and Super User roles and corresponding users'''
 
     # Set-up user registration
-    global user_datastore
-    user_datastore = SQLAlchemyUserDatastore(db, User, Role)
     global security
     security = Security(app, user_datastore)
 

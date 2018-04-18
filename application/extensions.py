@@ -5,7 +5,6 @@
 
 from flask_caching import Cache
 from flask_mail import Mail
-from flask_sqlalchemy import SQLAlchemy
 from flask_bootstrap import Bootstrap
 from flask_nav import Nav
 from flask_debugtoolbar import DebugToolbarExtension
@@ -21,7 +20,6 @@ cfg = Configuration()
 cache = Cache()
 log = JSONLogger()
 mail = Mail()
-db = SQLAlchemy()
 admin = Admin(name='Admin', index_view=MyAdminIndexView())
 
 boot = Bootstrap()
