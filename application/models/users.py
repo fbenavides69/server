@@ -52,7 +52,7 @@ class User(PrimaryKeyMixin, UserMixin):
         ''' Set password with Flask-Security encryption'''
         self.password = utils.encrypt_password(password)
 
-    def check_password(self, password):
+    def verify_password(self, password):
         ''' Check/Verify the supplied password against the stored password'''
         return self.password == utils.encrypt_password(password)
 
