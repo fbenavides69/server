@@ -104,5 +104,8 @@ The built in logging feature using JSON can be monitered as well:
     tail -f /tmp/server_development_json.log
 
 ## NOTES
-Both the SQLite file and logging file locations are setup via the instance
-configuration settings.
+The SQLite file location is setup via the instance configuration settings.
+The logging file location is setup via the different config files for:
+    - development
+    - stagging
+    - production
