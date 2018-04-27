@@ -37,10 +37,10 @@ def init_navbar():
 
     # registers the "index" (public) menubar
     nav.register_element(
-        'index',
+        'outside',
         ExtendedNavbar(
             title=View('Welcome', 'main.index'),
-            root_class='navbar navbar-inverse',
+            root_class='navbar navbar-default',
             right_items=(
                 View('Admin', 'admin.index'),
                 View('Register', 'security.register'),
@@ -51,7 +51,7 @@ def init_navbar():
         'inside',
         ExtendedNavbar(
             title=View('Welcome', 'main.index'),
-            root_class='navbar navbar-inverse',
+            root_class='navbar navbar-default',
             right_items=(
                 View('Logout', 'security.logout'),
             ),))
@@ -60,8 +60,8 @@ def init_navbar():
     nav.register_element(
         'admin',
         ExtendedNavbar(
-            title=View('Admin', 'admin.index'),
-            root_class='navbar navbar-inverse',
+            title=None,
+            root_class='',
             items=(
                 View('Role', 'role.index_view'),
                 View('User', 'user.index_view'),

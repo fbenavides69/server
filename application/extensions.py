@@ -20,7 +20,10 @@ cfg = Configuration()
 cache = Cache()
 log = JSONLogger()
 mail = Mail()
-admin = Admin(name='Admin', index_view=MyAdminIndexView())
+admin = Admin(
+    name='Admin',
+    index_view=MyAdminIndexView(),
+    template_mode='bootstrap3')
 
 boot = Bootstrap()
 nav = Nav()

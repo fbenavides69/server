@@ -1,16 +1,16 @@
 {% extends 'layout.html' %}
 
-{% block title %} Inside! {% endblock title %}
+{% block title %} Outside! {% endblock title %}
 
 {% block navbar %}
     <div class="container">
-        {{ nav.inside.render() }}
+        {{ nav.outside.render() }}
     </div>
 {% endblock navbar %}
 
 {% block mycontent %}
 
     <p class="text-right"><strong>{{ current_user.email }}</strong></p>
-    <h1> Inside! </h1>
+    <h1> Outside! </h1>
 
 {% endblock mycontent %}
