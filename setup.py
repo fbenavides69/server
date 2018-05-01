@@ -11,7 +11,7 @@ from setuptools import find_packages
 from codecs import open
 from os import path
 
-from application. __meta__ import *
+from application.__meta__ import *
 
 
 here = path.abspath(path.dirname(__file__))

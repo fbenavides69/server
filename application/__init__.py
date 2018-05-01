@@ -242,7 +242,7 @@ def create_app():
     app = Flask(
         __name__,
         template_folder='./templates',
-        static_folder='./templates/static',
+        static_folder='./static',
         instance_relative_config=True)
     app.url_map.strict_slashes = False
 
