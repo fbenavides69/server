@@ -18,6 +18,10 @@ from wtforms.fields.simple import PasswordField
 # Customized Role model for SQL-Admin
 class RoleAdmin(ModelView):
 
+    column_list = ('name', 'description')
+    column_editable_list = ('name', 'description')
+    column_auto_select_related = True
+
     # Prevent administration of Roles unless the currently logged-in user has
     # the "admin" role
     def is_accessible(self):
