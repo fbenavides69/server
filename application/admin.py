@@ -18,9 +18,13 @@ from wtforms.fields.simple import PasswordField
 # Customized Role model for SQL-Admin
 class RoleAdmin(ModelView):
 
-    column_list = ('name', 'description')
-    column_editable_list = ('name', 'description')
-    column_auto_select_related = True
+    # Only display relevant details on the list of Users
+    column_list = ('name', 'description',)
+    column_editable_list = ('name', 'description',)
+
+    # Don't include the users related field when creating or editing a
+    # Role (but see below)
+    form_excluded_columns = ('created_at', 'updated_at', 'users',)
 
     # Prevent administration of Roles unless the currently logged-in user has
     # the "admin" role
@@ -31,7 +35,7 @@ class RoleAdmin(ModelView):
 # Customized User model for SQL-Admin
 class UserAdmin(ModelView):
 
-    # Don't display the password on the list of Users
+    # Only display relevant details on the list of Users
     # column_exclude_list = ('password',)
     column_list = ('active', 'email', 'username', 'roles',)
     column_editable_list = ('active', 'email', 'username', 'roles',)
