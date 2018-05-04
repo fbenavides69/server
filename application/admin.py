@@ -75,7 +75,7 @@ class UserAdmin(ModelView):
     def on_model_change(self, form, model, is_created):
 
         # If the password field isn't blank...
-        if len(model.password2):
+        if 'password2' in dir(model) and len(model.password2):
 
             # ... then encrypt the new password prior to storing it in the
             # database. If the password field is blank, the existing password

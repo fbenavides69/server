@@ -1,29 +1,7 @@
 {% extends 'admin/admin_layout.html' %}
 
-{% block title %} Admin {% endblock title %}
-
-{% block main_menu %}
-          <ul class="nav navbar-nav">
-            <li>
-              <a href="/admin/role/">Role</a>
-            </li>
-            <li>
-              <a href="/admin/user/">User</a>
-            </li>
-          </ul>
-{% endblock main_menu %}
-
-{% block menu_links %}
-          <ul class="nav navbar-nav navbar-right">
-            <li>
-              <a href="/logout/">logout</a>
-            </li>
-          </ul>
-{% endblock menu_links %}
-
 {% block mycontent %}
 
-    <p class="text-right"><strong>{{ current_user.email }}</strong></p>
     <h1> Admin! </h1>
 
 {% endblock mycontent %}

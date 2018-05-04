@@ -42,17 +42,21 @@ def sitemap():
 
 
 def static_from_root():
+    ''' Define /static'''
     return send_from_directory(current_app.static_folder, request.path[1:])
 
 
 def favicon():
+    ''' Define external favicon as default'''
     return redirect('http://cdn.sstatic.net/superuser/img/favicon.ico')
 
 
 def index():
+    ''' Public entry point'''
     return render_template('index.html')
 
 
 @login_required
 def inside():
+    ''' Successful login'''
     return render_template('inside.html')

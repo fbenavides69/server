@@ -13,12 +13,58 @@
     <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js" integrity="sha384-Tc5IQib027qvyjSMfHjOMaLkfuWVxZxUPnCJA7l2mCWNIpG9mGCD8wGNIcPD7Txa" crossorigin="anonymous"></script>
 {% endblock tail %}
 
+{% set menu_root = admin_view.admin.menu() %}
+
+{% block page_body%}
+    {% block page_user %}
+    <div class="container{%if config.get('FLASK_ADMIN_FLUID_LAYOUT', False) %}-fluid{% endif %}">
+        <p class="text-right"><strong>{{ current_user.email }}</strong></p>
+    </div>
+    {% endblock %}
+    {{ super() }}
+{% endblock %}
+
 {% block brand %}
           <a class="navbar-brand" href="/admin">Admin</a>
 {%endblock brand %}
 
-{% block body %}
+{% block main_menu %}
+            <ul class="nav navbar-nav">
+                {% for item in menu_root %}
+                  {% if item.name != 'Home' %}
+                    {% if item.is_visible() %}
+                      {% if item.is_accessible() %}
+                        {% if item.is_active(admin_view) %}
+                <li class="active">
+                    <a href="{{ item.get_url() }}">{{ item.name }}</a>
+                </li>
+                        {% else %}
+                <li>
+                    <a href="{{ item.get_url() }}">{{ item.name }}</a>
+                </li>
+                        {% endif %}
+                      {% endif %}
+                    {% endif %}
+                  {% endif %}
+                {% endfor %}
+            </ul>
+{% endblock main_menu %}
 
+{% block menu_links %}
+            <ul class="nav navbar-nav navbar-right">
+            </ul>
+{% endblock menu_links %}
+
+{% block access_control %}
+            <ul class="nav navbar-nav navbar-right">
+                <li>
+                    <a href="/logout/">logout</a>
+                </li>
+            </ul>
+{% endblock access_control %}
+
+{% block body %}
+        {{ super() }}
         {% from "security/_macros.html" import render_field_with_errors, render_field %}
         {% include "security/_messages.html" %}
 
