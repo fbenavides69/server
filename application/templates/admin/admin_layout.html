@@ -36,13 +36,11 @@
                       {% if item.is_accessible() %}
                         {% if item.is_active(admin_view) %}
                 <li class="active">
-                    <a href="{{ item.get_url() }}">{{ item.name }}</a>
-                </li>
                         {% else %}
                 <li>
+                        {% endif %}
                     <a href="{{ item.get_url() }}">{{ item.name }}</a>
                 </li>
-                        {% endif %}
                       {% endif %}
                     {% endif %}
                   {% endif %}
