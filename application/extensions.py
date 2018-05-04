@@ -23,7 +23,8 @@ mail = Mail()
 admin = Admin(
     name='Admin',
     index_view=MyAdminIndexView(),
-    template_mode='bootstrap3')
+    template_mode='bootstrap3',
+    base_template='admin/new_base.html')
 
 boot = Bootstrap()
 nav = Nav()

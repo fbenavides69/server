@@ -8,6 +8,7 @@ from flask import Flask
 from flask import render_template
 from flask_nav.elements import *
 from flask_security import Security
+from flask_admin import helpers as admin_helpers
 
 from .extensions import cfg
 from .extensions import cache

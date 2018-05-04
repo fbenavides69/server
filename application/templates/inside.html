@@ -2,17 +2,11 @@
 
 {% block title %} Inside! {% endblock title %}
 
-{% block navbar %}
-
-    <div class="container">
-        {{ nav.inside.render() }}
-    </div>
-
-{% endblock navbar %}
-
 {% block mycontent %}
 
     <p class="text-right"><strong>{{ current_user.email }}</strong></p>
+    {{ nav.inside.render() }}
+
     <h1> Inside! </h1>
 
-{% endblock mycontent %}
+{% endblock %}
