@@ -12,6 +12,7 @@ class Role(PrimaryKeyMixin, RoleMixin):
 
     name = db.Column(db.String(80), unique=True)
     description = db.Column(db.String(255))
+    active = db.Column(db.Boolean())
 
     def __repr__(self):
         return '<Role> {} [{}|{}]'.format(self.id, self.name, self.description)

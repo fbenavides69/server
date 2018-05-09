@@ -25,12 +25,14 @@ from .models import db
 from .models import User
 from .models import Role
 from .models import user_datastore
+from .marshmallow import ma
 from .admin import UserAdmin
 from .admin import RoleAdmin
 
 from .commands import *
 from .urls import mod as urls
 from .graphql import mod as graphql_urls
+from .marshmallow import mod as ma_urls
 
 
 def init_navbar():
@@ -65,6 +67,7 @@ def register_extensions(app):
     cfg.init_app(app)
     cache.init_app(app)
     log.init_app(app)
+    ma.init_app(app)
     mail.init_app(app)
     db.init_app(app)
     admin.init_app(app)
@@ -83,6 +86,7 @@ def register_blueprints(app):
 
     app.register_blueprint(urls)
     app.register_blueprint(graphql_urls)
+    app.register_blueprint(ma_urls)
 
     @app.teardown_appcontext
     def shutdown_session(exception=None):
