@@ -48,7 +48,7 @@ To continue, refresh/rehash the shell.
 ### Install Node packages via yarn
 Proceed to install all needed React dependencies:
 
-    cd application/templates/static
+    cd application/static
     yarn install
     yarn build
     cd ../../..
