@@ -25,6 +25,7 @@ from .models import db
 from .models import User
 from .models import Role
 from .models import user_datastore
+from .jwt import jwt
 from .admin import UserAdmin
 from .admin import RoleAdmin
 
@@ -67,6 +68,7 @@ def register_extensions(app):
     log.init_app(app)
     mail.init_app(app)
     db.init_app(app)
+    jwt.init_app(app)
     admin.init_app(app)
 
     # Look and feel

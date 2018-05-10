@@ -16,4 +16,4 @@ def identity(payload):
     return user_datastore.find_user(id=payload['identity'])
 
 
-jwt = JWT(authenticate, identity)
+jwt = JWT(authentication_handler=authenticate, identity_handler=identity)
