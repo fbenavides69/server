@@ -3,18 +3,23 @@
 
 from flask_marshmallow import Marshmallow
 
+from application.models import Role
+from application.models import User
+
 
 ma = Marshmallow()
 
 
-class RoleSchema(ma.Schema):
+class RoleSchema(ma.ModelSchema):
     class Meta:
-        fields = ('name', 'description', 'active')
+        model = Role
+        fields = ('id', 'name', 'description', 'active')
 
 
-class UserSchema(ma.Schema):
+class UserSchema(ma.ModelSchema):
     class Meta:
-        fields = ('email', 'username', 'roles', 'active')
+        model = User
+        fields = ('id', 'email', 'username', 'roles', 'active')
 
 
 role_schema = RoleSchema(many=True)

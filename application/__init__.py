@@ -25,11 +25,8 @@ from .models import db
 from .models import User
 from .models import Role
 from .models import user_datastore
-<<<<<<< HEAD
 from .jwt import jwt
-=======
 from .marshmallow import ma
->>>>>>> df5243b66bc29301d54b5422e74b9876f63b445c
 from .admin import UserAdmin
 from .admin import RoleAdmin
 
