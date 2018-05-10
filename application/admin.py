@@ -19,17 +19,21 @@ from wtforms.fields.simple import PasswordField
 class RoleAdmin(ModelView):
 
     # Only display relevant details on the list of Users
-    column_list = ('name', 'description',)
-    column_editable_list = ('name', 'description',)
+    column_list = ('active', 'name', 'description',)
+    column_editable_list = ('active', 'name', 'description',)
 
     # Don't include the users related field when creating or editing a
     # Role (but see below)
     form_excluded_columns = ('created_at', 'updated_at', 'users',)
 
+    # Automatically display human-readable names for the current and available
+    # Users when creating or editing a User
+    column_auto_select_related = True
+
     # Prevent administration of Roles unless the currently logged-in user has
     # the "admin" role
     def is_accessible(self):
-        return current_user.has_role('admin')
+        return current_user.has_role(current_app.config['ADMIN_ROLE'])
 
 
 # Customized User model for SQL-Admin
@@ -45,7 +49,7 @@ class UserAdmin(ModelView):
     form_excluded_columns = ('password',)
 
     # Automatically display human-readable names for the current and available
-    # Roles when creating or editing a User
+    # Users when creating or editing a User
     column_auto_select_related = True
 
     # Prevent administration of Users unless the currently logged-in user has
