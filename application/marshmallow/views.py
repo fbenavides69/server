@@ -9,8 +9,10 @@ from .schema import user_schema
 
 
 def roles():
+    ''' Roles JSON serializer'''
     return(jsonify(role_schema.dump(Role.query.all()).data))
 
 
 def users():
+    ''' User JSON serializer'''
     return(jsonify(user_schema.dump(User.query.all()).data))

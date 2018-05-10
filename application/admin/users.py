@@ -1,43 +1,17 @@
 # -*- coding: utf-8 -*-
 ''' Flask Admin
 
-    Define the administration views'''
+    User administration view'''
 
-from flask import abort
-from flask import request
-from flask import url_for
-from flask import redirect
 from flask import current_app
 from flask_security import utils
 from flask_security import current_user
-from flask_admin import AdminIndexView
 from flask_admin.contrib.sqla import ModelView
 from wtforms.fields.simple import PasswordField
 
 
-# Customized Role model for SQL-Admin
-class RoleAdmin(ModelView):
-
-    # Only display relevant details on the list of Users
-    column_list = ('active', 'name', 'description',)
-    column_editable_list = ('active', 'name', 'description',)
-
-    # Don't include the users related field when creating or editing a
-    # Role (but see below)
-    form_excluded_columns = ('created_at', 'updated_at', 'users',)
-
-    # Automatically display human-readable names for the current and available
-    # Users when creating or editing a User
-    column_auto_select_related = True
-
-    # Prevent administration of Roles unless the currently logged-in user has
-    # the "admin" role
-    def is_accessible(self):
-        return current_user.has_role(current_app.config['ADMIN_ROLE'])
-
-
 # Customized User model for SQL-Admin
-class UserAdmin(ModelView):
+class UserAdminView(ModelView):
 
     # Only display relevant details on the list of Users
     # column_exclude_list = ('password',)
@@ -67,7 +41,7 @@ class UserAdmin(ModelView):
         # Start with the standard form as provided by Flask-Admin. We've
         # already told Flask-Admin to exclude the
         # password field from this form.
-        form_class = super(UserAdmin, self).scaffold_form()
+        form_class = super(UserAdminView, self).scaffold_form()
 
         # Add a password field, naming it "password2" and labeling it "New
         # Password".
@@ -85,29 +59,3 @@ class UserAdmin(ModelView):
             # database. If the password field is blank, the existing password
             # in the database will be retained.
             model.password = utils.encrypt_password(model.password2)
-
-
-# Customized Flask-admin Admin area
-class MyAdminIndexView(AdminIndexView):
-
-    def is_accessible(self):
-        if not current_user.is_active or not current_user.is_authenticated:
-            return False
-
-        if current_user.has_role(current_app.config['ADMIN_ROLE']):
-            return True
-
-        return False
-
-    def _handle_view(self, name, **kwargs):
-        """
-        Override builtin _handle_view in order to redirect users when a view
-        is not accessible.
-        """
-        if not self.is_accessible():
-            if current_user.is_authenticated:
-                # permission denied
-                abort(403)
-            else:
-                # login
-                return redirect(url_for('security.login', next=request.url))

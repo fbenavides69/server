@@ -14,7 +14,6 @@ from .extensions import cfg
 from .extensions import cache
 from .extensions import log
 from .extensions import mail
-from .extensions import admin
 from .extensions import boot
 from .extensions import nav
 from .extensions import custom_renderer
@@ -25,10 +24,11 @@ from .models import db
 from .models import User
 from .models import Role
 from .models import user_datastore
-from .jwt import jwt
+from .admin import admin
+from .admin import RoleAdminView
+from .admin import UserAdminView
 from .marshmallow import ma
-from .admin import UserAdmin
-from .admin import RoleAdmin
+from .jwt import jwt
 
 from .commands import *
 from .urls import mod as urls
@@ -208,8 +208,8 @@ def init_admin():
     ''' Initialize Admin elements'''
 
     # Add the Admin views
-    admin.add_view(RoleAdmin(Role, db.session))
-    admin.add_view(UserAdmin(User, db.session))
+    admin.add_view(RoleAdminView(Role, db.session))
+    admin.add_view(UserAdminView(User, db.session))
 
     # define a context processor for merging flask-admin's template context
     # into the flask-security views

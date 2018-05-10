@@ -8,11 +8,9 @@ from flask_mail import Mail
 from flask_bootstrap import Bootstrap
 from flask_nav import Nav
 from flask_debugtoolbar import DebugToolbarExtension
-from flask_admin import Admin
 
 from .config import Configuration
 from .logging import JSONLogger
-from .admin import MyAdminIndexView
 from .navbar import CustomBootstrapRenderer
 
 
@@ -20,11 +18,6 @@ cfg = Configuration()
 cache = Cache()
 log = JSONLogger()
 mail = Mail()
-admin = Admin(
-    name='Admin',
-    index_view=MyAdminIndexView(),
-    template_mode='bootstrap3',
-    base_template='admin/new_base.html')
 
 boot = Bootstrap()
 nav = Nav()
