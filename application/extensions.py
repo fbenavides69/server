@@ -8,6 +8,7 @@ from flask_mail import Mail
 from flask_bootstrap import Bootstrap
 from flask_nav import Nav
 from flask_debugtoolbar import DebugToolbarExtension
+from flask_migrate import Migrate
 
 from .config import Configuration
 from .logging import JSONLogger
@@ -18,6 +19,7 @@ cfg = Configuration()
 cache = Cache()
 log = JSONLogger()
 mail = Mail()
+migrate = Migrate()
 
 boot = Bootstrap()
 nav = Nav()
