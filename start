@@ -1,4 +1,5 @@
 #! /usr/bin/env bash
 export FLASK_DEBUG=1
+export FLASK_APP=run.py
 export APP_CONFIG_FILE=../config/development.py
-python run.py
+python ${FLASK_APP}
