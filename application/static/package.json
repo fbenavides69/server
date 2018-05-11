@@ -1,14 +1,13 @@
 {
   "name": "react-form",
   "version": "1.0.0",
-  "description": "",
+  "description": "Flask Yarn Webpack ReactJS bundles",
   "main": "index.js",
   "scripts": {
-    "build": "webpack -p --progress --config webpack.config.js",
-    "deb-build": "webpack --progress -d --config webpack.config.js",
+    "dev": "webpack --progress --mode development --config webpack.config.js",
+    "prod": "webpack --progress --mode production  --config webpack.config.js",
     "test": "jest",
-    "start": "webpack --config webpack.config.js",
-    "watch": "webpack --progress -d --config webpack.config.js --watch"
+    "watch": "webpack --progress --mode development --config webpack.config.js --watch "
   },
   "keywords": [
     "fullstack",
@@ -21,6 +20,7 @@
   ],
   "babel": {
     "presets": [
+      "env",
       "es2015",
       "react"
     ]
@@ -28,13 +28,18 @@
   "author": "Francisco Benavides <francisco.benavides@gmail.com>",
   "license": "MIT",
   "devDependencies": {
-    "babel-core": "^6.26.0",
+    "babel-core": "^6.26.3",
     "babel-loader": "^7.1.4",
+    "babel-preset-env": "^1.7.0",
     "babel-preset-es2015": "^6.24.1",
     "babel-preset-react": "^6.24.1",
-    "react": "^16.2.0",
-    "react-dom": "^16.2.0",
+    "css-loader": "^0.28.11",
+    "style-loader": "^0.21.0",
     "webpack": "^4.1.1",
     "webpack-cli": "^2.0.12"
+  },
+  "dependencies": {
+    "react": "^16.3.2",
+    "react-dom": "^16.3.2"
   }
 }
