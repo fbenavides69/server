@@ -18,6 +18,7 @@ from .extensions import boot
 from .extensions import nav
 from .extensions import custom_renderer
 from .extensions import debug_toolbar
+from .extensions import migrate
 from .navbar import ExtendedNavbar
 
 from .models import db
@@ -71,6 +72,7 @@ def register_extensions(app):
     ma.init_app(app)
     mail.init_app(app)
     db.init_app(app)
+    migrate.init_app(app, db)
     jwt.init_app(app)
     admin.init_app(app)
 

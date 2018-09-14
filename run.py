@@ -6,10 +6,16 @@ from tornado.ioloop import IOLoop
 from tornado.web import FallbackHandler, RequestHandler, Application
 from application import create_app
 
+TORNADO = '''<!DOCTYPE html>
+<html>
+    <head><title>Tornado WSGI</title></head>
+    <body><h1>Tornado Web Server</h1></body>
+</html>'''
+
 
 class MainHandler(RequestHandler):
     def get(self):
-        self.write("This message comes from Tornado ^_^")
+        self.write(TORNADO)
 
 
 tr = WSGIContainer(create_app())
